@@ -39,5 +39,3 @@ Disallow: /phpserver/
 Disallow: /pub/
 Disallow: /tag/
 Disallow: /rewiew
-
-Sitemap: http://werbeartikel-werbemittel-bedrucken.bykw.de/sitemap.xml

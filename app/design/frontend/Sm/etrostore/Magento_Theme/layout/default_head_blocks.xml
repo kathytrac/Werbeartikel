@@ -29,5 +29,8 @@
 		<css src="css/css-fix.css" />
 		<css src="css/ytextend.css" />
 		<css src="css/yttheme.css" />
+
+		<link src="Magento_Theme::favicon.ico" rel="icon" sizes="32x32" />
     </head>
 </page>
+  
