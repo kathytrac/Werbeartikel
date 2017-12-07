@@ -1,18 +1,12 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright © 2017 MageWorx. All rights reserved.
+ * See LICENSE.txt for license details.
  */
 namespace MageWorx\SeoRedirects\Controller\Adminhtml\Widget\Chooser;
 
 class Product extends \Magento\Backend\App\Action
 {
-    /**
-     * Authorization level of a basic admin session
-     */
-    const ADMIN_RESOURCE = 'Magento_Widget::widget_instance';
-
     /**
      * @var \Magento\Framework\Controller\Result\RawFactory
      */
@@ -22,6 +16,16 @@ class Product extends \Magento\Backend\App\Action
      * @var \Magento\Framework\View\LayoutFactory
      */
     protected $layoutFactory;
+
+    /** @var string  */
+    protected $categoryChooserClass          = 'Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser';
+
+    /** @var string  */
+    protected $productChooserContainerClass  = 'Magento\Catalog\Block\Adminhtml\Product\Widget\Chooser\Container';
+
+    /** @var string  */
+    protected $productChooserClass           =  'MageWorx\SeoRedirects\Block\Adminhtml\Widget\Chooser\Product';
+
 
     /**
      * @param \Magento\Backend\App\Action\Context $context
@@ -45,47 +49,73 @@ class Product extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $uniqId = $this->getRequest()->getParam('uniq_id');
-        $massAction = $this->getRequest()->getParam('use_massaction', false);
-        $productTypeId = $this->getRequest()->getParam('product_type_id', null);
-
         $layout = $this->layoutFactory->create();
-        $productsGrid = $layout->createBlock(
-            \MageWorx\SeoRedirects\Block\Adminhtml\Widget\Chooser\Product::class,
-            '',
-            [
-                'data' => [
-                    'id' => $uniqId,
-                    'use_massaction' => $massAction,
-                    'product_type_id' => $productTypeId,
-                    'category_id' => $this->getRequest()->getParam('category_id'),
-                ]
-            ]
-        );
+        $productsGridBlock = $this->createProductGrid($layout);
 
-        $html = $productsGrid->toHtml();
+        $gridHtml = $productsGridBlock->toHtml();
+        $categoryTreeHtml = '';
 
         if (!$this->getRequest()->getParam('products_grid')) {
             $categoriesTree = $layout->createBlock(
-                \Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser::class,
+                $this->categoryChooserClass,
                 '',
                 [
                     'data' => [
-                        'id' => $uniqId . 'Tree',
-                        'node_click_listener' => $productsGrid->getCategoryClickListenerJs(),
-                        'with_empty_node' => true,
+                        'id'                  => $this->getRequest()->getParam('uniq_id') . 'Tree',
+                        'node_click_listener' => $productsGridBlock->getCategoryClickListenerJs(),
+                        'with_empty_node'     => true,
                     ]
                 ]
             );
 
-            $html = $layout->createBlock(\Magento\Catalog\Block\Adminhtml\Product\Widget\Chooser\Container::class)
-                ->setTreeHtml($categoriesTree->toHtml())
-                ->setGridHtml($html)
-                ->toHtml();
+            $categoryTreeHtml = $categoriesTree->toHtml();
         }
+
+        $html = $this->getFinalHtml($layout, $gridHtml, $categoryTreeHtml);
+
 
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
         $resultRaw = $this->resultRawFactory->create();
         return $resultRaw->setContents($html);
+    }
+
+    /**
+     * @param \Magento\Framework\View\LayoutInterface $layout
+     * @return mixed
+     */
+    protected function createProductGrid($layout)
+    {
+        $data = [
+            'id'              => $this->getRequest()->getParam('uniq_id'),
+            'category_id'     => $this->getRequest()->getParam('category_id'),
+            'use_massaction'  => $this->getRequest()->getParam('use_massaction', false),
+            'product_type_id' => $this->getRequest()->getParam('product_type_id', null)
+        ];
+
+         return $layout->createBlock($this->productChooserClass, '', ['data' => $data]);
+    }
+
+    /**
+     * @param \Magento\Framework\View\LayoutInterface $layout
+     * @param string $gridHtml
+     * @param string $categoriesTreeHtml
+     * @return mixed
+     */
+    protected function getFinalHtml($layout, $gridHtml, $categoriesTreeHtml)
+    {
+        return $layout->createBlock($this->productChooserContainerClass)
+            ->setTreeHtml($categoriesTreeHtml)
+            ->setGridHtml($gridHtml)
+            ->toHtml();
+    }
+
+    /**
+     * Is access to section allowed
+     *
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        return $this->_authorization->isAllowed('MageWorx_SeoRedirects::customredirects');
     }
 }

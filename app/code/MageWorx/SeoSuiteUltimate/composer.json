@@ -1,6 +1,6 @@
 {
     "name": "mageworx/module-seosuiteultimate",
-    "version": "2.13.0",
+    "version": "2.13.1",
     "type": "metapackage",
     "require": {
         "mageworx/module-htmlsitemap": "2.1.9",
@@ -10,9 +10,9 @@
         "mageworx/module-seocrosslinks": "2.2.3",
         "mageworx/module-seoextended": "2.3.2",
         "mageworx/module-seomarkup": "2.2.3",
-        "mageworx/module-seoredirects": "2.1.0",
+        "mageworx/module-seoredirects": "2.1.1",
         "mageworx/module-seourls": "2.2.2",
-        "mageworx/module-seoxtemplates": "2.4.3",
+        "mageworx/module-seoxtemplates": "2.4.4",
         "mageworx/module-xmlsitemap": "2.1.5"
     }
 }

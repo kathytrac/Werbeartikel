@@ -375,13 +375,5 @@
             </argument>
         </actionsColumn>
     </columns>
-    <container name="sticky">
-        <argument name="data" xsi:type="array">
-            <item name="config" xsi:type="array">
-                <item name="component" xsi:type="string">Magento_Ui/js/grid/sticky/sticky</item>
-                <item name="toolbarProvider" xsi:type="string">mageworx_seoredirects_dpredirect_listing.mageworx_seoredirects_dpredirect_listing.listing_top</item>
-                <item name="listingProvider" xsi:type="string">mageworx_seoredirects_dpredirect_listing.mageworx_seoredirects_dpredirect_listing.mageworx_seoredirects_dpredirect_columns</item>
-            </item>
-        </argument>
-    </container>
+
 </listing>
