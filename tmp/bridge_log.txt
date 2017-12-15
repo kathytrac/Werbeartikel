@@ -1,4 +1,4 @@
-[Wed, 13 Dec 2017 15:44:11 +0100]Intializing
-[Wed, 13 Dec 2017 15:44:11 +0100]Connecting to database
-[Wed, 13 Dec 2017 15:44:11 +0100]Creating tmp file
-[Wed, 13 Dec 2017 15:44:11 +0100]Openning tmp file
+[Fri, 15 Dec 2017 11:54:47 +0100]Intializing
+[Fri, 15 Dec 2017 11:54:47 +0100]Connecting to database
+[Fri, 15 Dec 2017 11:54:47 +0100]Creating tmp file
+[Fri, 15 Dec 2017 11:54:47 +0100]Openning tmp file
