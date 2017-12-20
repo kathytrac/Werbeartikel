@@ -81,7 +81,7 @@ if (!empty($list)) {
                             <?php } ?>
 
                             <?php if ($this->_getConfig('cat_title_display') == 1 && $this->_getConfig('product_source') != 'media') { ?>
-                                <div class="bs-category"><?php echo __('Category:&nbsp') ;?>
+                                <div class="bs-category"><?php echo __('Category:&nbsp;') ;?>
                                     <a  href="<?php echo $_product->cat_link; ?>"  title="<?php echo $_product->cat_title; ?>"  <?php echo $helper->parseTarget($this->_getConfig('target')); ?>>
                                         <?php echo  $helper->truncate($_product->cat_title, $this->_getConfig('category_title_max_characs', 25)); ?>
                                     </a>

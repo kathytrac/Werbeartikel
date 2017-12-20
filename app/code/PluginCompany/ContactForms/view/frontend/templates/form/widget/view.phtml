@@ -30,7 +30,7 @@ if ($form) {
         <div id="pccf_form_<?php echo $form->getId() ?>"
              class="<?php echo $this->getCssClasses(); ?>"
              style="<?php echo $this->getStyles(); ?>;">
-            <img class="pccf_loader" src="<?php echo $this->getViewFileUrl('PluginCompany_ContactForms::img/gears-anim.gif'); ?>" style="position:absolute;left:50%;top:50%;margin-left:-90px;margin-top:-80px" />
+            <img class="pccf_loader" src="<?php echo $this->getViewFileUrl('PluginCompany_ContactForms::img/gears-anim.gif'); ?>" style="position:absolute;left:50%;top:50%;margin-left:-90px;margin-top:-80px" alt="page-loader" />
             <div class="form-view pccformwrapper <?php echo $form->getWrapClass(); ?> " style="position:relative;visibility:hidden;">
                 <?php if ($form->isPanel()) { ?>
             <?php if ($form->getShowTitle() == '1') { ?>
