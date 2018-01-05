@@ -36,7 +36,6 @@ Disallow: /bin/
 Disallow: /dev/
 Disallow: /lib/
 Disallow: /phpserver/
-Disallow: /pub/
 Disallow: /tag/
 Disallow: /rewiew
 
