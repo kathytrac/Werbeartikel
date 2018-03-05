@@ -196,4 +196,23 @@ In the meantime you can already start using the purchased extensions without any
         return $this->getLayout()->createBlock('Magento\Config\Block\System\Config\Form\Field');
     }
 
+    /**
+     * @param AbstractElement $element
+     * @return string
+     */
+    protected function _getChildrenElementsHtml(AbstractElement $element)
+    {
+        $elements = '';
+        foreach ($element->getElements() as $field) {
+            if ($field instanceof \Magento\Framework\Data\Form\Element\Fieldset) {
+                $elements .= '<tr id="row_' . $field->getHtmlId() . '">'
+                    . '<td colspan="4">' . $field->toHtml() . '</td></tr>';
+            } else {
+                $elements .= $field->toHtml();
+            }
+        }
+
+        return $elements;
+    }
+
 }

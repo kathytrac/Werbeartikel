@@ -101,7 +101,7 @@ class Form extends AbstractDb
      * @author Milan Simek
      */
     protected function _afterLoad(AbstractModel $object){
-        if ($object->getId()) {
+        if ($object->getId() && !is_array($object->getStoreId())) {
             $stores = $this->lookupStoreIds($object->getId());
             $object->setData('store_id', $stores);
         }
@@ -357,7 +357,12 @@ class Form extends AbstractDb
 
     private function conditionalAdminToFieldAfterLoad($object)
     {
-        $object->setConditToEmail(json_decode($object->getConditToEmail(), true));
+        if(!is_string($object->getConditToEmail()))
+            return $this;
+
+        $object->setConditToEmail(
+            json_decode($object->getConditToEmail(), true)
+        );
         return $this;
     }
 

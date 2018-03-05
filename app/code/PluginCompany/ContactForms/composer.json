@@ -6,7 +6,7 @@
         "plugincompany/licensemanager": "~100.0.0"
     },
     "type": "magento2-module",
-    "version": "100.1.2",
+    "version": "100.1.15",
     "license": [
         "custom"
     ],

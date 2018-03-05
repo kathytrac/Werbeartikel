@@ -25,6 +25,7 @@ class View extends Template implements BlockInterface
 
     private $formRepository;
     private $filter;
+    protected $_isScopePrivate = true;
 
     /**
      * Constructor
@@ -39,7 +40,6 @@ class View extends Template implements BlockInterface
         \PluginCompany\ContactForms\Model\Template\Filter $filter,
         array $data = []
     ) {
-        $this->_isScopePrivate = true;
         $this->formRepository = $formRepository;
         $this->filter = $filter;
         parent::__construct($context, $data);
@@ -51,7 +51,8 @@ class View extends Template implements BlockInterface
      * @return \PluginCompany\ContactForms\Block\Form\Widget\View
      * @author Milan Simek
      */
-    protected function _beforeToHtml() {
+    protected function _beforeToHtml()
+    {
         parent::_beforeToHtml();
         $formId = $this->getData('form_id');
         if ($formId) {
@@ -90,7 +91,8 @@ class View extends Template implements BlockInterface
             'beforeSubmitJs' => $form->getBeforesubmitJs(),
             'pageloadJs' => $form->getPageloadJs(),
             'rtl' => (bool)$form->getRtl(),
-            'widget' => $this->getEscapedData()
+            'widget' => $this->getEscapedData(),
+            'maxUploadSize' => $this->getFileUploadMaxSize()
         ];
         return $config;
     }
@@ -186,5 +188,34 @@ class View extends Template implements BlockInterface
         }
         return $data;
     }
+
+    private function getFileUploadMaxSize() {
+        static $max_size = -1;
+
+        if ($max_size < 0) {
+            $post_max_size = $this->parseSize(ini_get('post_max_size'));
+            if ($post_max_size > 0) {
+                $max_size = $post_max_size;
+            }
+            $upload_max = $this->parseSize(ini_get('upload_max_filesize'));
+            if ($upload_max > 0 && $upload_max < $max_size) {
+                $max_size = $upload_max;
+            }
+        }
+        $result = $max_size / (1024 * 1024);
+        return floor($result);
+    }
+
+    private function parseSize($size)
+    {
+        $unit = preg_replace('/[^bkmgtpezy]/i', '', $size);
+        $size = preg_replace('/[^0-9\.]/', '', $size);
+        if ($unit) {
+            return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+        } else {
+            return round($size);
+        }
+    }
+
 
 }

@@ -52,7 +52,7 @@
 	$element_googlefont = $namegooglefont_element[0];
 	//end google font element
 
-	require_once (BP."/vendor/oyejorge/less.php/lessc.inc.php");
+	require_once ("vendor/oyejorge/less.php/lessc.inc.php");
 	$less = new lessc;
 
 	$less->setVariables(array(

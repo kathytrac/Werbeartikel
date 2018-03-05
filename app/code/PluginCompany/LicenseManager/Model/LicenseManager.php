@@ -81,12 +81,24 @@ class LicenseManager
 
     public function getLicenseXmlPath($extensionKey)
     {
-        return $this->moduleReader->getModuleDir('etc', $extensionKey) . DIRECTORY_SEPARATOR . 'license.xml';
+        return $this->getEtcDir($extensionKey) . DIRECTORY_SEPARATOR . 'license.xml';
+    }
+
+    private function getEtcDir($extensionKey)
+    {
+        return $this->moduleReader->getModuleDir('etc', $extensionKey);
     }
 
     public function writeLicenseXml($xml, $extensionKey)
     {
+        $this->chmodEtcDir777($extensionKey);
         $this->ioAdapter->write($this->getLicenseXmlPath($extensionKey), $xml);
+        return $this;
+    }
+
+    private function chmodEtcDir777($extensionKey)
+    {
+        $this->ioAdapter->chmod($this->getEtcDir($extensionKey), 0777, true);
         return $this;
     }
 

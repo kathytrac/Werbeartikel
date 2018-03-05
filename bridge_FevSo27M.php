@@ -1,7 +1,7 @@
 <?php
 /*-----------------------------------------------------------------------------+
 | eMagicOne                                                                    |
-| Copyright (c) 2012-2017 eMagicOne.com <contact@emagicone.com>                |
+| Copyright (c) 2012-2018 eMagicOne.com <contact@emagicone.com>                |
 | All rights reserved                                                          |
 +------------------------------------------------------------------------------+
 |                                                                              |
@@ -17,10 +17,10 @@
 |                                                                              |
 |                                                                              |
 | Developed by eMagicOne,                                                      |
-| Copyright (C) 2012-2017                                                      |
+| Copyright (C) 2012-2018                                                      |
 +-----------------------------------------------------------------------------*/
 
-$version = '$Revision: 7.62 $';
+$version = '$Revision: 7.63 $';
 
 
 
@@ -302,7 +302,7 @@ if (!defined('USER_DB_SERVER') || !defined('USER_DB_SERVER_USERNAME') || !define
         case PRESTASHOP:
             if (file_exists(dirname(__FILE__) . '/app/config/parameters.php')) {
                 $settings = require_once dirname(__FILE__) . '/app/config/parameters.php';
-                define('_DB_SERVER_', $settings['parameters']['database_host']);
+                define('_DB_SERVER_', $settings['parameters']['database_host'] . (!empty($settings['parameters']['database_port']) ? ':' . $settings['parameters']['database_port'] : ''));
                 define('_DB_NAME_', $settings['parameters']['database_name']);
                 define('_DB_USER_', $settings['parameters']['database_user']);
                 define('_DB_PASSWD_', $settings['parameters']['database_password']);
@@ -556,8 +556,8 @@ switch ($task) {
         echo get_xml_data($xml_path, $xml_fields, $xml_items_node, $xml_items_info_node, $xml_filters);
         break;
     case 'get_ftp_files':
-         echo get_ftp_files($search_path, $mask, $ignore_dir);
-        break;        
+        echo get_ftp_files($search_path, $mask, $ignore_dir);
+        break;
     case 'get_cart_version':
         echo get_cart_version();
         break;
@@ -673,7 +673,7 @@ function handle_dirs($vars_main_dir, $vars_names)
         }
     }
 
-    return !empty($translations) ? '1|' . json_encode($translations) : '0|';
+    return is_array($translations) ? '1|' . json_encode($translations) : '0|';
 }
 
 /************************************************************************
@@ -2912,7 +2912,7 @@ function running($import_handle) {
                 $content = fread($fp, filesize($file_name));
                 $checksum_arr = explode("|", $content);
                 $checksum_prev = $checksum_arr[0];
-                
+
                 if (!isset($checksum_arr[1]) || $checksum_arr[1] < 0) {
                     $checksum_arr[1] = 0;
                 }
@@ -3025,7 +3025,7 @@ function running($import_handle) {
  * Temporary directory path autodiscovery
  *
  * @author alexerm
- * @return string|bool Temporary directory path or false ifcan't determine it 
+ * @return string|bool Temporary directory path or false ifcan't determine it
  */
 function m1BridgeGetTempDir() {
     global $temporary_dir;
@@ -3112,7 +3112,7 @@ function run_self_test() {
           . '</tr>';
 
     $html .= '<tr><td>Bridge Version</td><td>' . $GLOBALS['version'] . '</td><td></td></tr>';
-    
+
     $html .= '<tr><td>Temporary Directory Exists and Writable</td><td>'
           . (( $res = test_temp_directory() ) ? TEST_YES : TEST_NO) . '</td>';
 
@@ -3262,7 +3262,7 @@ function test_temp_free_space() {
     $temp_dir = m1BridgeGetTempDir();
     $freespace = (int)(@disk_free_space($temp_dir)/1024/1024); // in MB
     $freespace = $freespace ? $freespace : true;
-    
+
     $GLOBALS['testResult'] = $freespace;
     return $freespace > 0;
 }
@@ -3418,7 +3418,7 @@ function get_ftp_files($path, $mask, $ignore_dir) {
     $arr_ignore_dir = explode(';', $ignore_dir);
 
     if ($fp = opendir($path)) {
-        while ($value = readdir($fp)) {
+        while (false !== ($value = readdir($fp))) {
             $item = "$path/$value";
 
             if (is_file($item)) {
@@ -3724,7 +3724,7 @@ class dbConn {
         return $this->dbconn->error($link);
     }
 
-    
+
     /**
      *! @function close
      *  @abstract Proxy like class interface for close connection
@@ -3733,7 +3733,7 @@ class dbConn {
     public function close($link) {
         return $this->dbconn->close($link);
     }
-    
+
     /**
      *! @function __clone
      *  @abstract Prevent cloning of singleton object
@@ -3920,7 +3920,7 @@ class pdoMySQL extends dbConn {
         }
         return 1;
     }
-    
+
     /**
      *! @function __clone
      *  @abstract Prevent cloning of singleton object

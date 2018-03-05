@@ -17,9 +17,7 @@
 namespace PluginCompany\ContactForms\Model;
 
 use Magento\Email\Model\TemplateFactory;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
-use Magento\Framework\Event\ManagerInterface;
 use Magento\Store\Model\ScopeInterface;
 use \Magento\Framework\Mail\Template\TransportBuilder;
 
@@ -27,6 +25,7 @@ class Mailer extends TransportBuilder
 {
 
     private $mailData;
+    /** @var  \PluginCompany\ContactForms\Model\Entry */
     private $entry;
 
     public function sendCustomerNotification()
@@ -45,7 +44,7 @@ class Mailer extends TransportBuilder
             )->setToName(
                 $entry->getCustomerName()
             )->setBcc(
-                explode(',', $entry->getCustomerBcc())
+                ($entry->getCustomerBcc() ? explode(',', $entry->getCustomerBcc()) : null)
             )->setBody(
                 $this->getBodyPrefix() .
                 $entry->getCustomerNotification() .
@@ -60,7 +59,6 @@ class Mailer extends TransportBuilder
             ->setReplyTo(null)
         ;
         $this->sendMail();
-        //TODO error handling
 
         return $this;
     }
@@ -72,9 +70,9 @@ class Mailer extends TransportBuilder
 
     private function initMailData()
     {
-        if(empty($this->mailData)){
-            $this->mailData = new DataObject();
-        }
+//        if(empty($this->mailData)){
+        $this->mailData = new DataObject();
+//        }
         return $this;
     }
 
@@ -116,7 +114,7 @@ class Mailer extends TransportBuilder
             )->setToName(
                 null
             )->setBcc(
-                explode(',', $entry->getAdminBcc())
+                ($entry->getAdminBcc() ? explode(',', $entry->getAdminBcc()) : null)
             )->setBody(
                 $this->getBodyPrefix() .
                 $entry->getAdminNotification() .
@@ -127,8 +125,11 @@ class Mailer extends TransportBuilder
                 $entry->getAdminSenderName()
             )->setFromEmail(
                 $entry->getAdminSenderEmail()
+            )->setReplyTo(
+                $entry->getAdminReplyToEmail()
+            )->setAttachments(
+                $entry->getAllUploadedFilePaths()
             )
-            ->setReplyTo(null)
         ;
         $this->sendMail();
 
@@ -197,11 +198,41 @@ class Mailer extends TransportBuilder
             ->setSubject($mailData->getSubject())
             ->setFrom($mailData->getFromEmail(), $mailData->getFromName())
             ->setReplyTo($mailData->getReplyTo())
-            ->addBcc($this->getBcc())
             ->addTo($this->getToEmail(), $mailData->getToName())
         ;
+        //bcc needs to be checked for SendGrid extension compatibility
+        if($this->getBcc()){
+            $message->addBcc($this->getBcc());
+        }
+        $this->addAttachmentsToMessage($message, $mailData->getAttachments());
         $this->getTransport()->sendMessage();
         return $this;
+    }
+
+    private function addAttachmentsToMessage($message, $paths)
+    {
+        if(!is_array($paths)){
+            return $this;
+        }
+        foreach($paths as $filePath) {
+            if (!file_exists($filePath)) {
+                continue;
+            }
+            $message->createAttachment(
+                file_get_contents($filePath),
+                finfo_file(finfo_open(FILEINFO_MIME_TYPE), $filePath),
+                \Zend_Mime::DISPOSITION_ATTACHMENT,
+                \Zend_Mime::ENCODING_BASE64,
+                $this->getFileNameFromPath($filePath)
+            );
+        }
+        return $this;
+    }
+
+    private function getFileNameFromPath($path)
+    {
+        $parts = explode('/', $path);
+        return array_pop($parts);
     }
 
     public function getToEmail()

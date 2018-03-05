@@ -25,12 +25,12 @@
 $form = $this->getCurrentForm();
 if ($form) {
     ?>
-<div data-mage-init='{"PluginCompany_ContactForms/js/<?php echo $this->getShowFormAs(); ?>": <?php echo $this->getJsConfigJson(); ?>}'>
+<div class="pc-contact-form-<?php echo $form->getId(); ?>">
     <div style="<?php echo $this->getWrapperStyles(); ?>">
         <div id="pccf_form_<?php echo $form->getId() ?>"
              class="<?php echo $this->getCssClasses(); ?>"
              style="<?php echo $this->getStyles(); ?>;">
-            <img class="pccf_loader" src="<?php echo $this->getViewFileUrl('PluginCompany_ContactForms::img/gears-anim.gif'); ?>" style="position:absolute;left:50%;top:50%;margin-left:-90px;margin-top:-80px" alt="page-loader" />
+            <img class="pccf_loader" src="<?php echo $this->getViewFileUrl('PluginCompany_ContactForms::img/gears-anim.gif'); ?>" style="position:absolute;left:50%;top:50%;margin-left:-90px;margin-top:-80px" />
             <div class="form-view pccformwrapper <?php echo $form->getWrapClass(); ?> " style="position:relative;visibility:hidden;">
                 <?php if ($form->isPanel()) { ?>
             <?php if ($form->getShowTitle() == '1') { ?>
@@ -53,6 +53,15 @@ if ($form) {
         </div>
     </div>
 </div>
+
+
+<script type="text/x-magento-init">
+{
+    ".pc-contact-form-<?php echo $form->getId(); ?>": {
+        "PluginCompany_ContactForms/js/<?php echo $this->getShowFormAs(); ?>": <?php echo $this->getJsConfigJson(); ?>
+    }
+}
+</script>
 
 <?php if(trim($form->getCustomCss())){ ?>
     <style type="text/css">
