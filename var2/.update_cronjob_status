@@ -1,8 +1,0 @@
-{
-    "readiness_checks": {
-        "error": "<br/>Found non-writable path(s):<br/>/home/werbear4/public_html/php.ini.sample",
-        "file_permissions_verified": false
-    },
-    "last_timestamp": 1487151481,
-    "current_timestamp": 1487152141
-}
