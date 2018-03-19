@@ -1,3 +1,3 @@
 <?php echo 'Devart HTTP tunnel temporary file.'; exit; ?>
-926277 57210 46625
-899379 506176 39772
+567059 393860 41919
+778519 163098 44090
