@@ -35,4 +35,16 @@
             </argument>
         </arguments>
     </type>
+    <type name="MageWorx\SeoAll\Ui\Component\Listing\Column\Category">
+        <arguments>
+            <argument name="showTitleForUnknownCategory" xsi:type="boolean">0</argument>
+            <argument name="targetField" xsi:type="string">ref_category_id</argument>
+        </arguments>
+    </type>
+    <type name="MageWorx\SeoAll\Ui\Component\Listing\Column\Product">
+        <arguments>
+            <argument name="showTitleForUnknownCategory" xsi:type="boolean">0</argument>
+            <argument name="targetField" xsi:type="string">ref_product_sku</argument>
+        </arguments>
+    </type>
 </config>

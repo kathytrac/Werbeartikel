@@ -43,7 +43,7 @@ abstract class Crosslink extends Action
         CrosslinkFactory $crosslinkFactory,
         Context $context
     ) {
-    
+
         $this->coreRegistry = $registry;
         $this->crosslinkFactory = $crosslinkFactory;
         $this->resultRedirectFactory = $context->getResultRedirectFactory();

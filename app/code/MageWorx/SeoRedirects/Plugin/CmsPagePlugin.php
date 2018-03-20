@@ -81,6 +81,20 @@ class CmsPagePlugin extends \Magento\CmsUrlRewrite\Plugin\Cms\Model\ResourceMode
         \Magento\Framework\Model\AbstractModel $page
     ) {
         if (!$this->helperData->isKeepUrlsForDeletedEntities()) {
+
+            /**
+             * Since 2.2 version, Magento has been using the "after" plugin instead of the "around" one.
+             * We cannot call the "after" plugin from the extension's own "after" plugin because of the availability
+             * of third parameters for magento less than 2.2 version.
+             *
+             * @see https://github.com/magento/magento2/commit/96ebc9da6e51e5e65fcd8685fe61dba2a1258edc#diff-4baad23658603bc32397edd94230261eL77
+             *
+             * For magento 2.2, our code may be the cause of the incorrect sequence of the plugin's execution.
+             */
+            if (method_exists($this, 'afterDelete')) {
+                $result = $proceed($page);
+                return $result;
+            }
             return parent::aroundDelete($subject, $proceed, $page);
         }
 

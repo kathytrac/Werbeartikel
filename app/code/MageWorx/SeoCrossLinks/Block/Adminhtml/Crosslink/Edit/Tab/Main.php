@@ -1,24 +1,21 @@
 <?php
 /**
- * Copyright © 2016 MageWorx. All rights reserved.
+ * Copyright © 2018 MageWorx. All rights reserved.
  * See LICENSE.txt for license details.
  */
 
 namespace MageWorx\SeoCrossLinks\Block\Adminhtml\Crosslink\Edit\Tab;
 
 use MageWorx\SeoCrossLinks\Model\Crosslink;
-use Magento\Backend\Block\Widget\Form\Generic as GenericForm;
 use Magento\Backend\Block\Widget\Tab\TabInterface;
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\Data\FormFactory;
 use Magento\Store\Model\System\Store;
 use Magento\Config\Model\Config\Source\Yesno as BooleanOptions;
 use MageWorx\SeoCrossLinks\Model\Crosslink\Source\IsActive as LinkIsActive;
 use MageWorx\SeoCrossLinks\Model\Crosslink\Source\LinkTo as LinkToOptions;
 use MageWorx\SeoCrossLinks\Model\Crosslink\Source\Target as LinkTargetOptions;
+use MageWorx\SeoCrossLinks\Model\Crosslink\Source\Crosslink\CrosslinkTypeKey as CrosslinkTypeKeyOptions;
 
-class Main extends GenericForm implements TabInterface
+class Main extends \Magento\Widget\Block\Adminhtml\Widget\Options  implements TabInterface
 {
     /**
      * @var \Magento\Store\Model\System\Store
@@ -46,24 +43,35 @@ class Main extends GenericForm implements TabInterface
     protected $linkTargetOptions;
 
     /**
+     * @var CrosslinkTypeKeyOptions
+     */
+    protected $crosslinkTypeKeyOptions;
+
+    /**
      * @param Store $systemStore
      * @param BooleanOptions $booleanOptions
      * @param LinkToOptions $linkToOptions
      * @param LinkTargetOptions $linkTargetOptions
-     * @param Context $context
-     * @param Registry $registry
-     * @param FormFactory $formFactory
+     * @param \Magento\Backend\Block\Template\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Magento\Framework\Option\ArrayPool $sourceModelPool
+     * @param \Magento\Widget\Model\Widget $widget
      * @param array $data
      */
     public function __construct(
+
         Store $systemStore,
         BooleanOptions $booleanOptions,
         LinkIsActive $linkIsActive,
         LinkToOptions $linkToOptions,
         LinkTargetOptions $linkTargetOptions,
-        Context $context,
-        Registry $registry,
-        FormFactory $formFactory,
+        \Magento\Backend\Block\Template\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Magento\Framework\Option\ArrayPool $sourceModelPool,
+        \Magento\Widget\Model\Widget $widget,
+        CrosslinkTypeKeyOptions $crosslinkTypeKeyOptions,
         array $data = []
     ) {
         $this->systemStore           = $systemStore;
@@ -71,7 +79,13 @@ class Main extends GenericForm implements TabInterface
         $this->linkIsActiveOptions   = $linkIsActive;
         $this->linkToOptions         = $linkToOptions;
         $this->linkTargetOption      = $linkTargetOptions;
-        parent::__construct($context, $registry, $formFactory, $data);
+        $this->crosslinkTypeKeyOptions = $crosslinkTypeKeyOptions;
+        parent::__construct($context, $registry, $formFactory, $sourceModelPool, $widget, $data);
+    }
+
+    public function addFields()
+    {
+        return $this;
     }
 
     /**
@@ -85,7 +99,6 @@ class Main extends GenericForm implements TabInterface
         $crosslink = $this->_coreRegistry->registry('mageworx_seocrosslinks_crosslink');
 
         $form = $this->_formFactory->create();
-        $form->setHtmlIdPrefix('crosslink_');
         $form->setFieldNameSuffix('crosslink');
 
         $fieldset = $form->addFieldset(
@@ -179,7 +192,7 @@ class Main extends GenericForm implements TabInterface
         );
 
         $url = $fieldset->addField(
-            'ref_static_url',
+            CrosslinkTypeKeyOptions::URL_REQUEST_IDENTIFIER,
             'text',
             [
                 'label'    => __('Custom URL'),
@@ -191,28 +204,8 @@ class Main extends GenericForm implements TabInterface
             ]
         );
 
-        $product = $fieldset->addField(
-            'ref_product_sku',
-            'text',
-            [
-                'label'    => __('Product SKU'),
-                'name'     => 'ref_product_sku',
-                'index'    => 'ref_product_sku',
-                'required'  => true,
-            ]
-        );
-
-        $category = $fieldset->addField(
-            'ref_category_id',
-            'text',
-            [
-                'label'    => __('Category ID'),
-                'name'     => 'ref_category_id',
-                'index'    => 'ref_category_id',
-                'class'    => 'required-entry not-negative-amount integer',
-                'required'  => true,
-            ]
-        );
+        $category = $this->addCategoryChooserField($fieldset, CrosslinkTypeKeyOptions::CATEGORY_REQUEST_IDENTIFIER);
+        $product =  $this->addProductChooserField($fieldset, CrosslinkTypeKeyOptions::PRODUCT_REQUEST_IDENTIFIER);
 
         $fieldset->addField(
             'replacement_count',
@@ -240,33 +233,6 @@ class Main extends GenericForm implements TabInterface
             ]
         );
 
-        $this->setChild(
-            'form_after',
-            $this->getLayout()->createBlock(
-                'Magento\Backend\Block\Widget\Form\Element\Dependence'
-            )
-            ->addFieldMap($reference->getHtmlId(), $reference->getName())
-            ->addFieldMap($url->getHtmlId(), $url->getName())
-            ->addFieldMap($product->getHtmlId(), $product->getName())
-            ->addFieldMap($category->getHtmlId(), $category->getName())
-            ->addFieldDependence(
-                $url->getName(),
-                $reference->getName(),
-                Crosslink::REFERENCE_TO_STATIC_URL
-            )
-            ->addFieldDependence(
-                $product->getName(),
-                $reference->getName(),
-                Crosslink::REFERENCE_TO_PRODUCT_BY_SKU
-            )
-            ->addFieldDependence(
-                $category->getName(),
-                $reference->getName(),
-                Crosslink::REFERENCE_TO_CATEGORY_BY_ID
-            )
-        );
-
-
         $fieldset->addField(
             'nofollow_rel',
             'select',
@@ -291,6 +257,35 @@ class Main extends GenericForm implements TabInterface
             ]
         );
 
+        $this->setChild(
+            'form_after',
+            $this->getLayout()->createBlock(
+                'Magento\Backend\Block\Widget\Form\Element\Dependence'
+            )
+                ->addFieldMap($reference->getHtmlId(), $reference->getName())
+                ->addFieldMap($url->getHtmlId(), $url->getName())
+                ->addFieldMap($product->getHtmlId(), $product->getName())
+                ->addFieldMap($category->getHtmlId(), $category->getName())
+                ->addFieldDependence(
+                    $url->getName(),
+                    $reference->getName(),
+                    Crosslink::REFERENCE_TO_STATIC_URL
+                )
+                ->addFieldDependence(
+                    $product->getName(),
+                    $reference->getName(),
+                    Crosslink::REFERENCE_TO_PRODUCT_BY_SKU
+                )
+                ->addFieldDependence(
+                    $category->getName(),
+                    $reference->getName(),
+                    Crosslink::REFERENCE_TO_CATEGORY_BY_ID
+                )
+        );
+
+
+        $this->addJsDependency($reference);
+
         $crosslinkData = $this->_session->getData('mageworx_seocrosslinks_crosslink_data', true);
         if ($crosslinkData) {
             $crosslink->addData($crosslinkData);
@@ -303,6 +298,129 @@ class Main extends GenericForm implements TabInterface
         $form->addValues($crosslink->getData());
         $this->setForm($form);
         return parent::_prepareForm();
+    }
+
+    /**
+     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
+     * @return $this
+     */
+    protected function addCategoryChooserField($fieldset, $name)
+    {
+        $field = $fieldset->addField(
+            $name,
+            'label',
+            [
+                'name'      => $name,
+                'label'     =>  __('Select Category...'),
+                'required'  => true,
+                'index'     => $name,
+                'class'     => 'widget-option',
+            ]
+        );
+
+        $helperBlock = $this->getLayout()->createBlock(
+            '\Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser',
+            '',
+            ['data' => []]
+        );
+
+        $helperBlock->setConfig(
+            []
+        )->setFieldsetId(
+            $fieldset->getId()
+        )->prepareElementHtml(
+            $field
+        );
+
+        return $field;
+    }
+
+    /**
+     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
+     * @return $this
+     */
+    protected function addProductChooserField($fieldset, $name)
+    {
+        $field = $fieldset->addField(
+            $name,
+            'label',
+            [
+                'name'      => $name,
+                'label'     =>  __('Select Product...'),
+                'required'  => true,
+                'class'     => 'widget-option',
+                'index'    => 'ref_product_sku',
+            ]
+        );
+
+        $helperBlock = $this->getLayout()->createBlock(
+            'Magento\Catalog\Block\Adminhtml\Product\Widget\Chooser',
+            '',
+            ['data' => []]
+        );
+
+        if ($helperBlock instanceof \Magento\Framework\DataObject) {
+            $helperBlock->setConfig(
+                []
+            )->setFieldsetId(
+                $fieldset->getId()
+            )->prepareElementHtml(
+                $field
+            );
+        }
+
+        return $field;
+    }
+
+    /**
+     * @param $reference
+     * @return $this
+     */
+    protected function addJsDependency($reference)
+    {
+        $referenceOptions = json_encode($this->getCrosslinksTypeReferenceKeyEntityOptions());
+
+        $reference->setAfterElementHtml("<script>
+
+            require(['jquery'], function($) {
+               
+                var referenceOptions = $referenceOptions;
+                               
+                function actionChooser(action, entityName) {
+                    
+                    var inputElementClass = '.field-chooser' + entityName + ' input';
+                    var fieldClass = '.field-' + entityName;
+                    var chooserClass = '.field-chooser' + entityName;
+                             
+                    if (action == 'hide') {
+                        $(inputElementClass).removeClass('required-entry');
+                        $(fieldClass).hide();                    
+                        $(chooserClass).hide();
+                    } 
+                    if (action == 'show') {                    
+                        $(inputElementClass).addClass('required-entry');
+                        $(fieldClass).show();                    
+                        $(chooserClass).show();
+                    }
+                }
+                    
+                $('#reference').on('change', function() {
+                    
+                    for (key in referenceOptions) {
+                        actionChooser('hide', referenceOptions[key]);
+                    }                    
+                    var value = $(this).val();
+                    actionChooser('show', referenceOptions[value]);
+                });
+                                              
+                $('document').ready(function () {
+                   $('#reference').trigger('change');                  
+                });
+            }
+        );
+        </script>");
+
+        return $this;
     }
 
     /**
@@ -351,14 +469,14 @@ class Main extends GenericForm implements TabInterface
         $hrefAfter  = '</a>';
 
         $note = '<p>' . __("NOTE: Enter one keyword (keyword phrase) per line. "
-            . "A new cross link rule will be created for each entered keyword.");
+                . "A new cross link rule will be created for each entered keyword.");
 
         $note .= '</p><p>' . __("For multiple keywords use the Reduced Multisave Priority feature."
-            . " It reduces the keyword priority for every next keyword on the list "
-            . "(thus, the most important keywords appear in the first place).");
+                . " It reduces the keyword priority for every next keyword on the list "
+                . "(thus, the most important keywords appear in the first place).");
 
         $note .= '</p><p>' . __("Adding '+' before or after a keyword will apply the Cross Link rule to all its variations. "
-            . "E.g. Entering 'iphone 5+' will apply the rule to 'iphone 5s', 'iphone 5c', etc. (but not to 'iphone 5').") . '</p>';
+                . "E.g. Entering 'iphone 5+' will apply the rule to 'iphone 5s', 'iphone 5c', etc. (but not to 'iphone 5').") . '</p>';
 
         $note .= '<p>' . __('For more info, follow the %1 link %2.', $hrefBefore, $hrefAfter) . '</p>';
 
@@ -373,5 +491,15 @@ class Main extends GenericForm implements TabInterface
         $note .= __("Link with 'http[s]://' will be added as it is.");
         $note .= '</p>';
         return $note;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCrosslinksTypeReferenceKeyEntityOptions()
+    {
+        $referenceKeyOptions = $this->crosslinkTypeKeyOptions->toArray();
+        unset($referenceKeyOptions[Crosslink::REFERENCE_TO_STATIC_URL]);
+        return $referenceKeyOptions;
     }
 }

@@ -13,8 +13,8 @@ Keyword,Keyword
 "NOTE: Cross Link will be build in the chosen store views.","NOTE: Cross Link will be build in the chosen store views."
 Reference,Reference
 "Custom URL","Custom URL"
-"Product SKU","Product SKU"
-"Category ID","Category ID"
+"Product","Product"
+"Category","Category"
 "Max Replacement Count per Page","Max Replacement Count per Page"
 "Max # of this keyword per page. 100 is the max value.","Max # of this keyword per page. 100 is the max value."
 Priority,Priority
@@ -50,8 +50,8 @@ No,No
 "Don't Use","Don't Use"
 "For Blank","For Blank"
 "For All","For All"
-"To Product by SKU","To Product by SKU"
-"To Category by ID","To Category by ID"
+"Product","Product"
+"Category","Category"
 _self,_self
 _blank,_blank
 Edit,Edit
@@ -85,3 +85,6 @@ Enable,Enable
 ID,ID
 "Link Title","Link Title"
 "Replacement Count","Replacement Count"
+"Select Category...","Select Category..."
+"Select Product...","Select Product..."
+

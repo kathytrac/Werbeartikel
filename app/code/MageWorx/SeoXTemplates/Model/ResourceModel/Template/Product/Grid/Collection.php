@@ -75,21 +75,7 @@ class Collection extends TemplateProductCollection implements SearchResultInterf
     public function setAggregations($aggregations)
     {
         $this->aggregations = $aggregations;
-    }
-
-
-    /**
-     * Retrieve all ids for collection
-     * Backward compatibility with EAV collection
-     *
-     * @param int $limit
-     * @param int $offset
-     * @return array
-     */
-    public function getAllIds($limit = null, $offset = null)
-    {
-        return $this->getConnection()->fetchCol($this->_getAllIdsSelect($limit, $offset), $this->_bindParams);
-    }
+    }    
 
     /**
      * Get search criteria.

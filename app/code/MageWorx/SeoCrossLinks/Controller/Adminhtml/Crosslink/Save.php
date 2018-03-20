@@ -8,6 +8,7 @@ namespace MageWorx\SeoCrossLinks\Controller\Adminhtml\Crosslink;
 
 use MageWorx\SeoCrossLinks\Controller\Adminhtml\Crosslink;
 use Magento\Framework\Exception\LocalizedException;
+use MageWorx\SeoCrossLinks\Model\Crosslink as ModelCrosslink;
 
 class Save extends Crosslink
 {
@@ -21,10 +22,10 @@ class Save extends Crosslink
         $data = $this->getRequest()->getPost('crosslink');
         $resultRedirect = $this->resultRedirectFactory->create();
         if ($data) {
+            $data = $this->prepareData($data);
             $data = $this->filterData($data);
             $crosslink = $this->initCrosslink();
             $crosslink->setData($data);
-
             $this->_eventManager->dispatch(
                 'mageworx_seocrosslinks_crosslink_prepare_save',
                 [
@@ -89,9 +90,9 @@ class Save extends Crosslink
                     '_current' => true
                 ]
             );
+
             return $resultRedirect;
         }
-
         $resultRedirect->setPath('mageworx_seocrosslinks/*/');
         return $resultRedirect;
     }
@@ -110,5 +111,23 @@ class Save extends Crosslink
         $keywordsArray = array_filter($keywordsArray);
         $keywordsArray = array_unique($keywordsArray);
         return (count($keywordsArray) > 1) ? array_values($keywordsArray) : array($data['keyword']);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function prepareData($data)
+    {
+        if ($data['reference'] != ModelCrosslink::REFERENCE_TO_STATIC_URL) {
+            if (!empty($data['reference'])) {
+                $data['ref_category_id'] = str_replace(['category/', 'product/'], '', $data['ref_category_id']);
+                $productId = (str_replace(['category/', 'product/'], '', $data['ref_product_sku']));
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $currentproduct = $objectManager->create('Magento\Catalog\Model\Product')->load($productId);
+                $data['ref_product_sku'] = $currentproduct->getSku();
+            }
+        }
+        return $data;
     }
 }

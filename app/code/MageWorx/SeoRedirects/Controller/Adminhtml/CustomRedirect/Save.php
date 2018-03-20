@@ -43,7 +43,7 @@ class Save extends CustomRedirectController
     protected $categoryFactory;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Category
+     * @var \MageWorx\SeoAll\Model\ResourceModel\Category
      */
     protected $resourceCategory;
 
@@ -91,7 +91,7 @@ class Save extends CustomRedirectController
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
-        \Magento\Catalog\Model\ResourceModel\Category $resourceCategory,
+        \MageWorx\SeoAll\Model\ResourceModel\Category $resourceCategory,
         \Magento\Cms\Model\PageFactory $pageFactory,
         \MageWorx\SeoRedirects\Model\ResourceModel\Redirect\CustomRedirect\CollectionFactory $redirectCollectionFactory,
         UrlFinderInterface $urlFinder,

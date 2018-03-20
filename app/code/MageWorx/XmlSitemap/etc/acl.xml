@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © 2015 MageWorx. All rights reserved.
+ * Copyright © 2017 MageWorx. All rights reserved.
  * See LICENSE.txt for license details.
  */
  -->
@@ -14,6 +14,11 @@
                         <resource id="Magento_Config::config">
                             <resource id="MageWorx_XmlSitemap::config_xmlsitemap" title="XML Sitemap Section (by MageWorx)" sortOrder="70"/>
                         </resource>
+                    </resource>
+                </resource>
+                <resource id="Magento_Backend::marketing">
+                    <resource id="Magento_Backend::marketing_seo">
+                        <resource id="MageWorx_XmlSitemap::sitemap" title="Sitemap by MageWorx" sortOrder="65" />
                     </resource>
                 </resource>
             </resource>

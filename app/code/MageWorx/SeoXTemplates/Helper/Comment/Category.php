@@ -50,7 +50,6 @@ class Category extends \Magento\Framework\App\Helper\AbstractHelper
                 $comment .= '<br><p>' . $this->getWebsiteNameComment();
                 $comment .= '<br><p>' . $this->getStoreNameComment();
                 $comment .= '<br><p>' . $this->getStoreViewNameComment();
-                $comment .= '<br><p>' . $this->getRandomizeComment();
                 break;
             default:
                 throw new \UnexpectedValueException(__('SEO XTemplates: Unknow Category Template Type'));

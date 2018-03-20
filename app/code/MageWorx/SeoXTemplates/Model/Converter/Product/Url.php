@@ -12,6 +12,7 @@ use MageWorx\SeoXTemplates\Helper\Data as HelperData;
 use Magento\Tax\Helper\Data as HelperTax;
 use Magento\Catalog\Model\Product\Url as ProductUrl;
 use MageWorx\SeoXTemplates\Helper\Converter as HelperConverter;
+use Magento\Framework\Registry;
 
 class Url extends ConverterProduct
 {
@@ -34,12 +35,23 @@ class Url extends ConverterProduct
         \MageWorx\SeoXTemplates\Model\ResourceModel\Category $resourceCategory,
         \Magento\Framework\App\Request\Http $request,
         \Magento\Catalog\Model\ResourceModel\Product $resourceProduct,
+        Registry $registry,
         HelperPrice $helperPrice,
         HelperTax $helperTax,
         ProductUrl $url
     ) {
         $this->url = $url;
-        parent::__construct($storeManager, $helperData, $helperConverter, $resourceCategory, $request, $resourceProduct, $helperPrice, $helperTax);
+        parent::__construct(
+            $storeManager,
+            $helperData,
+            $helperConverter,
+            $resourceCategory,
+            $request,
+            $resourceProduct,
+            $registry,
+            $helperPrice,
+            $helperTax
+        );
     }
 
     /**

@@ -301,30 +301,32 @@
                 </item>
             </argument>
         </column>
-        <column name="ref_product_sku">
+        <column name="ref_product_sku" class="MageWorx\SeoAll\Ui\Component\Listing\Column\Product">
             <argument name="data" xsi:type="array">
                 <item name="js_config" xsi:type="array">
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
                 </item>
-                <item name="config" xsi:type="array">                    
+                <item name="config" xsi:type="array">
+                    <item name="bodyTmpl" xsi:type="string">ui/grid/cells/html</item>
                     <item name="filter" xsi:type="string">text</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="align" xsi:type="string">left</item>
-                    <item name="label" xsi:type="string" translate="true">Product SKU</item>
+                    <item name="label" xsi:type="string" translate="true">Product</item>
                     <item name="sortOrder" xsi:type="number">30</item>
                 </item>
             </argument>
         </column>
-        <column name="ref_category_id">
+        <column name="ref_category_id" class="MageWorx\SeoAll\Ui\Component\Listing\Column\Category">
             <argument name="data" xsi:type="array">
                 <item name="js_config" xsi:type="array">
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/column</item>
                 </item>
-                <item name="config" xsi:type="array">                  
+                <item name="config" xsi:type="array">
+                    <item name="bodyTmpl" xsi:type="string">ui/grid/cells/html</item>
                     <item name="filter" xsi:type="string">text</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="align" xsi:type="string">left</item>
-                    <item name="label" xsi:type="string" translate="true">Category ID</item>
+                    <item name="label" xsi:type="string" translate="true">Category</item>
                     <item name="sortOrder" xsi:type="number">35</item>
                 </item>
             </argument>
@@ -338,9 +340,9 @@
                     <item name="editor" xsi:type="array">
                         <item name="editorType" xsi:type="string">text</item>
                         <item name="validation" xsi:type="array">
-                            <item name="required-entry" xsi:type="boolean">true</item>                            
-                            <item name="integer" xsi:type="boolean">true</item>
-                            <item name="validate-number-range" xsi:type="string">0-100</item>
+                            <item name="required-entry" xsi:type="boolean">true</item>
+                          <!--  <item name="integer" xsi:type="boolean">true</item>-->
+                           <item name="validate-number-range" xsi:type="string">0-100</item>
                         </item>
                     </item>
                     <item name="filter" xsi:type="string">textRange</item>
@@ -348,7 +350,6 @@
                     <item name="align" xsi:type="string">left</item>
                     <item name="label" xsi:type="string" translate="true">Replacement Count</item>
                     <item name="sortOrder" xsi:type="number">40</item>
-                    <item name="notice" xsi:type="string">545454545454</item>                    
                 </item>
             </argument>
         </column>
@@ -361,8 +362,7 @@
                     <item name="editor" xsi:type="array">
                         <item name="editorType" xsi:type="string">text</item>
                         <item name="validation" xsi:type="array">
-                            <item name="required-entry" xsi:type="boolean">true</item>                            
-                            <item name="integer" xsi:type="boolean">true</item>
+                            <item name="required-entry" xsi:type="boolean">true</item>
                             <item name="validate-number-range" xsi:type="string">0-100</item>
                         </item>
                     </item>

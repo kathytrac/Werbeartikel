@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © 2015 MageWorx. All rights reserved.
+ * Copyright © 2017 MageWorx. All rights reserved.
  * See LICENSE.txt for license details.
  */
  -->
@@ -19,7 +19,7 @@
                 <field id="homepage_optimize" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Homepage Optimization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Crop identifier (ex: "/home/") from Home URL and set priority (1.0)</comment>
+                    <comment><![CDATA[Crop identifier (ex: "/home/") from Home URL and set priority (1.0)]]></comment>
                 </field>
                 <field id="enable_additional_links" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Additional Links</label>
@@ -44,10 +44,19 @@
                 <field id="additional_links_priority" translate="label comment" type="text" sortOrder="28" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Priority</label>
                     <backend_model>Magento\Sitemap\Model\Config\Backend\Priority</backend_model>
-                    <comment>Valid values range from 0.0 to 1.0.</comment>
+                    <comment><![CDATA[Valid values range from 0.0 to 1.0.]]></comment>
                     <depends>
                         <field id="enable_additional_links">1</field>
                     </depends>
+                </field>
+                <field id="exclude_out_of_stock_products" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Exclude "Out of Stock" Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="enable_validate_urls" translate="label comment" type="select" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Validate URLs</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Disable if you are using the specific literal characters in the URLs.]]></comment>
                 </field>
             </group>
             <group id="common_sitemap" translate="label comment" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">

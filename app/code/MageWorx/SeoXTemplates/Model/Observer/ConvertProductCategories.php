@@ -7,7 +7,7 @@
 namespace MageWorx\SeoXTemplates\Model\Observer;
 
 /**
- * Observer class for product seo name
+ * Observer class for conversion product template variables: category, categories
  */
 class ConvertProductCategories implements \Magento\Framework\Event\ObserverInterface
 {
@@ -37,12 +37,13 @@ class ConvertProductCategories implements \Magento\Framework\Event\ObserverInter
     protected $descriptionConverter;
 
     /**
+     * ConvertProductCategories constructor.
      *
-     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\MetaTitle $metaTitleConverter,
-     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\MetaDescription $metaDescriptionConverter,
-     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\MetaKeywords $metaKeywordsConverter,
-     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\ShortDescription $shortDescriptionConverter,
-     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\Description $descriptionConverter
+     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\MetaTitle        $metaTitleConverter
+     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\MetaDescription  $metaDescriptionConverter
+     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\MetaKeywords     $metaKeywordsConverter
+     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\ShortDescription $shortDescriptionConverter
+     * @param \MageWorx\SeoXTemplates\Model\Converter\Product\Description      $descriptionConverter
      */
     public function __construct(
         \MageWorx\SeoXTemplates\Model\Converter\Product\MetaTitle $metaTitleConverter,
@@ -66,22 +67,32 @@ class ConvertProductCategories implements \Magento\Framework\Event\ObserverInter
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-
         $product = $observer->getData('product');
 
-        $metaTitle          = $this->metaTitleConverter->convert($product, $product->getMetaTitle(), true);
+        if (!$product) {
+            return;
+        }
+
+        /** @var \Magento\Catalog\Controller\Product\View $action */
+        $action  = $observer->getData('controller_action');
+
+        if ($action->getRequest()->getFullActionName() !== 'catalog_product_view') {
+            return;
+        }
+
+        $metaTitle = $this->metaTitleConverter->convert($product, $product->getMetaTitle(), true);
         $product->setMetaTitle($metaTitle);
 
-        $metaDescription          = $this->metaDescriptionConverter->convert($product, $product->getMetaDescription(), true);
+        $metaDescription = $this->metaDescriptionConverter->convert($product, $product->getMetaDescription(), true);
         $product->setMetaDescription($metaDescription);
 
-        $metaKeyword           = $this->metaKeywordsConverter->convert($product, $product->getMetaKeyword(), true);
+        $metaKeyword = $this->metaKeywordsConverter->convert($product, $product->getMetaKeyword(), true);
         $product->setMetaKeyword($metaKeyword);
 
-        $shortDescription          = $this->shortDescriptionConverter->convert($product, $product->getShortDescription(), true);
+        $shortDescription = $this->shortDescriptionConverter->convert($product, $product->getShortDescription(), true);
         $product->setShortDescription($shortDescription);
 
-        $description          = $this->descriptionConverter->convert($product, $product->getDescription(), true);
+        $description = $this->descriptionConverter->convert($product, $product->getDescription(), true);
         $product->setDescription($description);
     }
 }

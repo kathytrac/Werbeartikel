@@ -11,6 +11,7 @@ use Magento\Framework\Pricing\Helper\Data as HelperPrice;
 use MageWorx\SeoXTemplates\Helper\Data as HelperData;
 use MageWorx\SeoXTemplates\Helper\Converter as HelperConverter;
 use Magento\Tax\Helper\Data as HelperTax;
+use Magento\Framework\Registry;
 
 abstract class Product extends Converter
 {
@@ -37,6 +38,11 @@ abstract class Product extends Converter
      * @var HelperPrice
      */
     protected $helperPrice;
+
+    /**
+     * @var Registry
+     */
+    protected $registry;
 
     /**
      *
@@ -69,10 +75,12 @@ abstract class Product extends Converter
         \MageWorx\SeoXTemplates\Model\ResourceModel\Category $resourceCategory,
         \Magento\Framework\App\Request\Http $request,
         \Magento\Catalog\Model\ResourceModel\Product $resourceProduct,
+        Registry $registry,
         HelperPrice $helperPrice,
         HelperTax $helperTax
     ) {
         parent::__construct($storeManager, $helperData, $helperConverter, $resourceCategory, $request);
+        $this->registry        = $registry;
         $this->helperPrice     = $helperPrice;
         $this->resourceProduct = $resourceProduct;
         $this->helperTax       = $helperTax;
@@ -196,7 +204,7 @@ abstract class Product extends Converter
      */
     protected function _convertCategory()
     {
-        $params = $this->_getRequestParams();
+        $params = $this->_getRequestCategoryParams();
         if (empty($params['category'])) {
             return '';
         }
@@ -224,10 +232,8 @@ abstract class Product extends Converter
      */
     protected function _convertCategories()
     {
-        $params = $this->_getRequestParams();
-        if (empty($params['category'])) {
-            return '';
-        }
+        $categoryId = $this->_getCategoryId();
+
         if (!is_callable([$this->resourceCategory, 'getAttributeRawValue'])) {
             return '';
         } else {
@@ -235,12 +241,12 @@ abstract class Product extends Converter
                 return self::$_variablesData['categories'];
             }
 
-            $path = $this->_getRawCategoryAttributeValue($params['category'], 'path');
+            $path = $this->_getRawCategoryAttributeValue($categoryId, 'path');
             $pathArray = array_reverse(explode('/', $path['path']));
 
             $names = [];
             foreach ($pathArray as $id) {
-                if ($params['category'] == $id && !empty(self::$_variablesData['category'])) {
+                if ($categoryId == $id && !empty(self::$_variablesData['category'])) {
                     $category = self::$_variablesData['category'];
                 } else {
                     $category = $this->_getRawCategoryAttributeValue($id, 'name');
@@ -251,9 +257,30 @@ abstract class Product extends Converter
             }
             $value = trim(implode(', ', $names));
             self::$_variablesData['categories'] = $value;
+
             return $value;
         }
         return '';
+    }
+
+    /**
+     * @return int|null
+     */
+    protected function _getCategoryId()
+    {
+        $params = $this->_getRequestParams();
+
+        if (!empty($params['category'])) {
+            return $params['category'];
+        }
+
+        // When the category loaded by data from customer session.
+        $currentCategory = $this->registry->registry('current_category');
+        if ($currentCategory) {
+            return $currentCategory->getId();
+        }
+
+        return null;
     }
 
     /**

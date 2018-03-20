@@ -24,8 +24,8 @@ class LinkTo extends Source
     {
         return [
             ['value' => Crosslink::REFERENCE_TO_STATIC_URL,     'label' => __('Custom URL')],
-            ['value' => Crosslink::REFERENCE_TO_PRODUCT_BY_SKU, 'label' => __('To Product by SKU')],
-            ['value' => Crosslink::REFERENCE_TO_CATEGORY_BY_ID, 'label' => __('To Category by ID')],
+            ['value' => Crosslink::REFERENCE_TO_PRODUCT_BY_SKU, 'label' => __('Product')],
+            ['value' => Crosslink::REFERENCE_TO_CATEGORY_BY_ID, 'label' => __('Category')],
         ];
     }
 }
